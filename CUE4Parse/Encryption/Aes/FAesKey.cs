@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using CUE4Parse.Utils;
 
 namespace CUE4Parse.Encryption.Aes
@@ -18,12 +19,21 @@ namespace CUE4Parse.Encryption.Aes
 
         public FAesKey(string keyString)
         {
-            if (!keyString.StartsWith("0x"))
-                keyString = "0x" + keyString;
-            if (keyString.Length != 66)
-                throw new ArgumentException("Aes Key must be 32 bytes long");
-            KeyString = keyString;
-            Key = keyString.Substring(2).ParseHexBinary();
+            if (keyString.Length == 44)
+            {
+                KeyString = keyString;
+                Key = Encoding.ASCII.GetBytes(keyString);
+            }
+            else
+            {
+                if (!keyString.StartsWith("0x"))
+                    keyString = "0x" + keyString;
+                if (keyString.Length != 66)
+                    throw new ArgumentException("Aes Key must be 32 bytes long");
+                KeyString = keyString;
+                Key = keyString.Substring(2).ParseHexBinary();
+            }
+            
         }
 
         public override string ToString() => KeyString;
